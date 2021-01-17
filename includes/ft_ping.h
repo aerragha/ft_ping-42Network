@@ -12,9 +12,9 @@
 
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>
 
 
-
-void    Sayhey();
+void print_error(char *error);

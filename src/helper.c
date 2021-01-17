@@ -10,9 +10,10 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
+#include "ft_ping.h"
 
-void Sayhey()
+void print_error(char *error)
 {
-    printf("here SayHey\n");
+    printf("%s\n", error);
+    exit(0);
 }

@@ -12,12 +12,13 @@
 
 #include "ft_ping.h"
 
-int main(int ac, char **av)
+int     main(int ac, char **av)
 {
-    (void)ac;
     (void)av;
-    uid_t uid = getuid();
-    printf("%d", uid);
-    Sayhey();
+    if (getuid() != 0) 
+        print_error("ft_ping: You must be root");
+    if (ac < 2) 
+        print_error("Usage: ft_ping [-v verbose] [-h help] hostname");
+ 
     return 0;
 }
