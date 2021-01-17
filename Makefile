@@ -13,25 +13,40 @@
 
 NAME = ft_ping
 
-SRC = main.c src/helper.c
+PATH_SRC = src/
 
-OBJ = $(SRC:.c=.o)
+PATH_OBJ = obj/
+
+SRC = main.c\
+	  helper.c
+
+ALL_OBJ = $(addprefix $(PATH_OBJ), $(SRC:.c=.o))
+
+INCDIR = includes/
+
+HEADERS = $(addprefix $(INCDIR), ft_ping.h)
+
+INC = -I $(INCDIR)
 
 CC = gcc
 
 CFLAGS = -Wall -Wextra -Werror
 
-all : $(NAME)
+all : $(PATH_OBJ) $(NAME)
 
-$(NAME) : $(OBJ)
-	@$(CC) $(OBJ) -o $(NAME)
-	@echo 'SUCCESS!'
+$(PATH_OBJ):
+	@mkdir -p $@
 
+$(NAME) : $(ALL_OBJ)
+	$(CC) $(ALL_OBJ) -o $(NAME)
+
+$(PATH_OBJ)%.o : $(PATH_SRC)%.c $(HEADERS)
+	$(CC) $(CFLAGS) -c $(INC) $< -o $@
+	
 clean :
-	@rm -rf $(OBJ)
+	@rm -rf $(PATH_OBJ)
 
 fclean : clean
 	@rm -rf $(NAME)
-	@rm -rf $(NAMA)
 
 re : fclean all

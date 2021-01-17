@@ -10,12 +10,14 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include "includes/ft_ping.h"
+#include "ft_ping.h"
 
 int main(int ac, char **av)
 {
-    printf("%d %s\n", ac, av[0]);
+    (void)ac;
+    (void)av;
+    uid_t uid = getuid();
+    printf("%d", uid);
     Sayhey();
     return 0;
 }

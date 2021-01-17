@@ -10,4 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-void Sayhey();
+
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/types.h>
+
+
+
+void    Sayhey();
