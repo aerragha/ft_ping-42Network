@@ -11,14 +11,27 @@
 # **************************************************************************** #
 
 
-all: 
-	echo "clean, make, build"
-	
-build:
-	gcc main.c src/helper.c -o ft_ping2
+NAME = ft_ping
 
-run: 
-	./ft_ping2
+SRC = main.c src/helper.c
 
-clean:
-	rm ft_ping2
+OBJ = $(SRC:.c=.o)
+
+CC = gcc
+
+CFLAGS = -Wall -Wextra -Werror
+
+all : $(NAME)
+
+$(NAME) : $(OBJ)
+	@$(CC) $(OBJ) -o $(NAME)
+	@echo 'SUCCESS!'
+
+clean :
+	@rm -rf $(OBJ)
+
+fclean : clean
+	@rm -rf $(NAME)
+	@rm -rf $(NAMA)
+
+re : fclean all
