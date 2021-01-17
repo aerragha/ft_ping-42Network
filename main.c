@@ -15,6 +15,7 @@
 
 int main(int ac, char **av)
 {
+    printf("%d %s\n", ac, av[0]);
     Sayhey();
     return 0;
 }
