@@ -20,9 +20,11 @@
 typedef struct      s_params 
 {
     int     verbose;
+    char	*host;
 }                   t_params;
 
 extern t_params *g_params;
 
 void print_error(char *error);
 void parse(int ac, char **av);
+void init_params();
