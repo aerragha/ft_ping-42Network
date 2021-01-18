@@ -12,8 +12,30 @@
 
 #include "ft_ping.h"
 
+
+
 void print_error(char *error)
 {
     printf("%s\n", error);
     exit(0);
+}
+
+
+void parse(int ac, char **av) 
+{
+    (void)ac;
+    (void)av;
+    int i;
+
+    i = 0;
+
+    while (++i < ac) {
+        printf("%d\t%s\n", i, av[i]);
+        if (av[i][0] == '-') 
+        {
+            if (av[i][1] == 'v')      
+            else
+                print_error("Usage: ft_ping [-v verbose] [-h help] hostname");
+        }
+    }
 }

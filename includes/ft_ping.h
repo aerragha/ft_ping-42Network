@@ -17,4 +17,12 @@
 #include <sys/types.h>
 
 
+typedef struct      s_params 
+{
+    int     verbose;
+}                   t_params;
+
+extern t_params *g_params;
+
 void print_error(char *error);
+void parse(int ac, char **av);
