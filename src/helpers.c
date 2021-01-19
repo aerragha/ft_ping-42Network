@@ -34,7 +34,7 @@ void ft_bzero(void *s, size_t n)
 	}
 }
 
-void init_params() 
+void init_params()
 {
     g_params = malloc(sizeof(t_params));
     ft_bzero(g_params, sizeof(t_params));
@@ -67,3 +67,4 @@ void parse(int ac, char **av)
         }
     }
 }
+

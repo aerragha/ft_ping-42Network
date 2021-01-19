@@ -20,9 +20,17 @@ int get_infos(char *av)
 	ft_bzero(&hints, sizeof(hints));
 	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_RAW;
+	hints.ai_protocol = AI_PASSIVE;
 	if (getaddrinfo(av, NULL, &hints, &servinfo) != 0)
 		return (0);
 	g_params->rec_in = (struct sockaddr_in *)servinfo->ai_addr;
 	return (1);
 }
 
+
+void handle_signal(int sig) {
+    if (sig == SIGINT)
+        printf("SIGINT signal");
+    if (sig == SIGALRM)
+        printf("SIGALRM signal");
+}

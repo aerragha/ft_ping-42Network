@@ -18,7 +18,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <arpa/inet.h>
-
+#include <signal.h>
 
 
 typedef struct      s_params 
@@ -27,6 +27,7 @@ typedef struct      s_params
     int     verbose;
     char	*host;
     char	addr_str[INET_ADDRSTRLEN];
+    int     sockfd;
 }                   t_params;
 
 extern t_params *g_params;
@@ -36,3 +37,4 @@ void    parse(int ac, char **av);
 void    init_params();
 void    ft_bzero(void *s, size_t n);
 int     get_infos(char *av);
+void    handle_signal(int sig);

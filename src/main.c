@@ -23,8 +23,8 @@ int     main(int ac, char **av)
     init_params();
     parse(ac, av);
     // 
-    signal(SIGALRM, sig_handler);
-	signal(SIGINT, sig_handler);
+    signal(SIGALRM, handle_signal);
+	signal(SIGINT, handle_signal);
     //
     return 0;
 }
