@@ -15,16 +15,24 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+
 
 
 typedef struct      s_params 
 {
+    struct sockaddr_in	*rec_in;
     int     verbose;
     char	*host;
+    char	addr_str[INET_ADDRSTRLEN];
 }                   t_params;
 
 extern t_params *g_params;
 
-void print_error(char *error);
-void parse(int ac, char **av);
-void init_params();
+void    print_error(char *error);
+void    parse(int ac, char **av);
+void    init_params();
+void    ft_bzero(void *s, size_t n);
+int     get_infos(char *av);

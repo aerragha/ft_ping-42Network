@@ -22,5 +22,9 @@ int     main(int ac, char **av)
         print_error("Usage: ft_ping [-v verbose] [-h help] hostname");
     init_params();
     parse(ac, av);
+    // 
+    signal(SIGALRM, sig_handler);
+	signal(SIGINT, sig_handler);
+    //
     return 0;
 }

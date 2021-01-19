@@ -12,7 +12,7 @@
 
 #include "ft_ping.h"
 
-// t_params *g_params;
+t_params *g_params;
 
 void print_error(char *error)
 {
@@ -56,6 +56,14 @@ void parse(int ac, char **av)
         else 
         {
             g_params->host = av[i];
+            if (!get_infos(av[i]))
+            {
+                printf("ft_ping: %s: ", g_params->host);
+                print_error("Name or service not known");
+            }
+            inet_ntop(AF_INET, (void *)&g_params->rec_in->sin_addr, 
+            g_params->addr_str, INET_ADDRSTRLEN);
+            return ;
         }
     }
 }
