@@ -30,7 +30,10 @@ int get_infos(char *av)
 
 void handle_signal(int sig) {
     if (sig == SIGINT)
-        printf("SIGINT signal");
+        {
+			printf("SIGINT signal\n");
+			g_params->signals.end = 1;
+		}
     if (sig == SIGALRM)
         printf("SIGALRM signal");
 }
@@ -39,4 +42,14 @@ void ping() {
 	init_socket();
 	printf("PING %s (%s) 56(84) bytes of data.\n", g_params->host,
 	g_params->addr_str);
+	int i = 0;
+	while (!g_params->signals.end)
+	{
+		i++;
+		if (g_params->signals.send) 
+		{
+			printf("tesstt %d\n", i++);
+		}
+	}
 }
+

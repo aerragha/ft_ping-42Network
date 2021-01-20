@@ -20,7 +20,18 @@
 #include <arpa/inet.h>
 #include <signal.h>
 
+typedef struct      s_packet
+{
+    char        buf[84];
+    struct      iphdr *ip;
+    struct      icmphdr *hdr;
+}                   t_packet;
 
+typedef struct      s_signals
+{
+    int     send;
+    int     end;
+}                   t_signals;
 
 typedef struct      s_params 
 {
@@ -29,6 +40,8 @@ typedef struct      s_params
     char	*host;
     char	addr_str[INET_ADDRSTRLEN];
     int     sockfd;
+    int     dst_addr;
+    t_signals			signals;
 }                   t_params;
 
 extern t_params *g_params;

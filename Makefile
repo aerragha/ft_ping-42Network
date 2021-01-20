@@ -19,7 +19,7 @@ PATH_OBJ = obj/
 SRC = main.c\
 	  helpers.c\
 	  ft_ping.c\
-	  ft_socket
+	  ft_socket.c
 
 ALL_OBJ = $(addprefix $(PATH_OBJ), $(SRC:.c=.o))
 
