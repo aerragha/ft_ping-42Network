@@ -21,6 +21,7 @@
 #include <signal.h>
 
 
+
 typedef struct      s_params 
 {
     struct sockaddr_in	*rec_in;
@@ -38,3 +39,6 @@ void    init_params();
 void    ft_bzero(void *s, size_t n);
 int     get_infos(char *av);
 void    handle_signal(int sig);
+void	ping();
+void	init_socket();
+

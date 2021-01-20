@@ -20,7 +20,7 @@ int get_infos(char *av)
 	ft_bzero(&hints, sizeof(hints));
 	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_RAW;
-	hints.ai_protocol = AI_PASSIVE;
+	hints.ai_protocol = IPPROTO_ICMP;
 	if (getaddrinfo(av, NULL, &hints, &servinfo) != 0)
 		return (0);
 	g_params->rec_in = (struct sockaddr_in *)servinfo->ai_addr;
@@ -33,4 +33,10 @@ void handle_signal(int sig) {
         printf("SIGINT signal");
     if (sig == SIGALRM)
         printf("SIGALRM signal");
+}
+
+void ping() {
+	init_socket();
+	printf("PING %s (%s) 56(84) bytes of data.\n", g_params->host,
+	g_params->addr_str);
 }

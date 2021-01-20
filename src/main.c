@@ -15,16 +15,14 @@
 
 int     main(int ac, char **av)
 {
-    (void)av;
     if (getuid() != 0) 
         print_error("ft_ping: You must be root");
     if (ac < 2) 
         print_error("Usage: ft_ping [-v verbose] [-h help] hostname");
     init_params();
     parse(ac, av);
-    // 
     signal(SIGALRM, handle_signal);
 	signal(SIGINT, handle_signal);
-    //
+    ping();
     return 0;
 }

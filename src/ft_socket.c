@@ -12,15 +12,17 @@
 
 #include "ft_ping.h"
 
-void	create_socket()
+void	init_socket()
 {
-	int sockfd;
-	int opt_val;
+	printf("Hereeee\n");
+	// int sockfd;
+	// int opt_val;
 
-	opt_val = 1;
-	if ((sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP)) == -1)
-		errorstr("Socket file descriptor not received!");
-	if (setsockopt(sockfd, IPPROTO_IP, IP_HDRINCL, &opt_val, sizeof(int)) < 0)
-		errorstr("setsockopt Error");
-	g_params->sockfd = sockfd;
+	// opt_val = 1;
+	// if ((sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP)) == -1)
+	// 	print_error("Socket file descriptor not received!");
+	// if (setsockopt(sockfd, SOL_SOCKET, IP_HDRINCL, &opt_val, sizeof(int)) < 0)
+	// 	print_error("setsockopt Error");
+	// g_params->sockfd = sockfd;
 }
+
