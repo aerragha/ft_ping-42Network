@@ -19,6 +19,14 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <signal.h>
+#include <netinet/ip_icmp.h>
+#include <sys/time.h>
+
+
+
+
+
+
 
 typedef struct      s_packet
 {
@@ -63,6 +71,10 @@ typedef struct      s_params
     pid_t	pid;
     int		seq;
     int		bytes;
+    int     received;
+    int		ttl;
+    int     sended;
+    t_packet				packet;
     t_res		        res;
     t_time				time;
     t_signals			signals;
@@ -79,5 +91,9 @@ void    handle_signal(int sig);
 void	ping();
 void	init_socket();
 unsigned short	checksum(unsigned short *data, int len);
-void    send_ping()
+void    send_ping();
+void	init_header();
+void	print_verbose();
+void	calc_rtt();
+void 	receive_packet();
 

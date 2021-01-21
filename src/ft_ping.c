@@ -57,15 +57,16 @@ void handle_signal(int sig) {
 
 void ping() {
 	init_socket();
-	printf("PING %s (%s) 56(84) bytes of data.\n", g_params->host,
-	g_params->addr_str);
+	printf("PING %s (%s) 56(84) bytes of data.\n", g_params->host, g_params->addr_str);
+	
 	while (!g_params->signals.end)
 	{
 		if (g_params->signals.send) 
 		{
-			send_ping()
+			printf("hnaaaaaaa\n");
+			send_ping();
 			alarm(1);
-			get_packet();
+			// receive_packet();
 		}
 	}
 }
