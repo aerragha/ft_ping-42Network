@@ -29,7 +29,7 @@ void send_ping()
 {
 	ft_bzero((void *)g_params->packet.buf, 84);
 	g_params->packet.ip->version = 4;
-	// g_params->pckt.ip->ihl = sizeof(*g_params->packet.ip) >> 2;
+	g_params->packet.ip->ihl = sizeof(*g_params->packet.ip) >> 2;
 	g_params->packet.ip->ttl = g_params->ttl;
 	g_params->packet.ip->protocol = IPPROTO_ICMP;
 	inet_pton(AF_INET, g_params->addr_str, &g_params->packet.ip->daddr);
@@ -97,11 +97,12 @@ void	calc_rtt()
 void 	receive_packet()
 {
 	int ret;
-
 	init_header();
 	while (!g_params->signals.end)
 	{
-		if ((ret = recvmsg(g_params->sockfd, &g_params->res.msg, MSG_DONTWAIT)) > 0)
+		ret = recvmsg(g_params->sockfd, &g_params->res.msg, MSG_DONTWAIT);
+		printf("sdsds %d\n", ret);
+		if (ret > 0)
 		{
 			g_params->bytes = ret;
 			if (g_params->packet.hdr->un.echo.id == g_params->pid)
@@ -114,6 +115,7 @@ void 	receive_packet()
 			}
 			else if (g_params->verbose == 1)
 				print_verbose();
+			return ;
 		}
 	}
 }

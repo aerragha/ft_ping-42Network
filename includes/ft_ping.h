@@ -22,12 +22,6 @@
 #include <netinet/ip_icmp.h>
 #include <sys/time.h>
 
-
-
-
-
-
-
 typedef struct      s_packet
 {
     char        buf[84];
@@ -74,7 +68,7 @@ typedef struct      s_params
     int     received;
     int		ttl;
     int     sended;
-    t_packet				packet;
+    t_packet			packet;
     t_res		        res;
     t_time				time;
     t_signals			signals;

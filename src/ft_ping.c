@@ -63,10 +63,10 @@ void ping() {
 	{
 		if (g_params->signals.send) 
 		{
-			printf("hnaaaaaaa\n");
 			send_ping();
+			printf("sended %d\n", g_params->seq);
 			alarm(1);
-			// receive_packet();
+			receive_packet();
 		}
 	}
 }

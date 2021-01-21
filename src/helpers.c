@@ -49,7 +49,7 @@ void init_params()
     g_params->signals.end = 0;
     g_params->ttl = 64;
     g_params->pid = getpid();
-    g_params->seq = 1;
+    g_params->seq = 0;
 }
 
 void parse(int ac, char **av) 
