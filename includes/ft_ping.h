@@ -33,6 +33,25 @@ typedef struct      s_signals
     int     end;
 }                   t_signals;
 
+typedef struct	s_time
+{
+	struct timeval	time_start;
+	struct timeval	time_end;
+	struct timeval	s;
+	struct timeval	r;
+	long double		rtt;
+	long double		min;
+	long double		max;
+	long double		avg;
+	long double		sum_square;
+}				t_time;
+
+typedef struct	s_res
+{
+	struct iovec	iov[1];
+	struct msghdr	msg;
+}				t_res;
+
 typedef struct      s_params 
 {
     struct sockaddr_in	*rec_in;
@@ -40,7 +59,12 @@ typedef struct      s_params
     char	*host;
     char	addr_str[INET_ADDRSTRLEN];
     int     sockfd;
-    int     dst_addr;
+    int     daddr;
+    pid_t	pid;
+    int		seq;
+    int		bytes;
+    t_res		        res;
+    t_time				time;
     t_signals			signals;
 }                   t_params;
 
@@ -54,4 +78,6 @@ int     get_infos(char *av);
 void    handle_signal(int sig);
 void	ping();
 void	init_socket();
+unsigned short	checksum(unsigned short *data, int len);
+void    send_ping()
 

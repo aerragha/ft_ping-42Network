@@ -12,6 +12,23 @@
 
 #include "ft_ping.h"
 
+unsigned short	checksum(unsigned short *data, int len)
+{
+	unsigned long	checksum;
+
+	checksum = 0;
+	while (len > 1)
+	{
+		checksum = checksum + *data++;
+		len = len - sizeof(unsigned short);
+	}
+	if (len)
+		checksum = checksum + *(unsigned char*)data;
+	checksum = (checksum >> 16) + (checksum & 0xffff);
+	checksum = checksum + (checksum >> 16);
+	return (unsigned short)(~checksum);
+}
+
 int get_infos(char *av)
 {
 	struct addrinfo hints;
@@ -35,20 +52,20 @@ void handle_signal(int sig) {
 			g_params->signals.end = 1;
 		}
     if (sig == SIGALRM)
-        printf("SIGALRM signal");
+        g_params->signals.send = 1;
 }
 
 void ping() {
 	init_socket();
 	printf("PING %s (%s) 56(84) bytes of data.\n", g_params->host,
 	g_params->addr_str);
-	int i = 0;
 	while (!g_params->signals.end)
 	{
-		i++;
 		if (g_params->signals.send) 
 		{
-			printf("tesstt %d\n", i++);
+			send_ping()
+			alarm(1);
+			get_packet();
 		}
 	}
 }

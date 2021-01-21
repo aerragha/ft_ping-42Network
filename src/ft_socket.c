@@ -16,7 +16,6 @@ void	init_socket()
 {
 	int sockfd;
 	// int opt_val;
-	// int ttl_val=64;
 
 	// opt_val = 1;
 	if ((sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP)) == -1)
@@ -30,34 +29,98 @@ void send_ping()
 {
 	ft_bzero((void *)g_params->packet.buf, 84);
 	g_params->packet.ip->version = 4;
+	g_params->pckt.ip->ihl = sizeof(*g_params->pckt.ip) >> 2;
 	g_params->packet.ip->ttl = g_params.ttl;
 	g_params->packet.ip->protocol = IPPROTO_ICMP;
-	inet_pton(AF_INET, g_params->addr_str, &g_params->packet.ip->dst_addr)
+	inet_pton(AF_INET, g_params->addr_str, &g_params->packet.ip->daddr);
+	g_params->daddr = g_params->packet.ip.daddr;
+	g_params->packet.hdr->type = ICMP_ECHO;
+	g_params->packet.hdr->code = 0;
+	g_params->packet.hdr->un.echo.id = g_params->pid;
+	g_params->packet.hdr->un.echo.sequence = g_params->seq++;
+	g_params->packet.hdr->checksum = checksum((unsigned short*)g_params->packet.hdr, sizeof(struct icmphdr));
+	if (sendto(g_params->sockfd, (void *)&g_params->packet, 84, 0, 
+	(void *)g_params->rec_in, sizeof(struct sockaddr_in)) < 0)
+		print_error("Error: sendto is failed");
+	if (gettimeofday(&g_params->time.s, NULL) < 0)
+		print_error("Error: gettimeofday is failed")
+	if (g_params->sended == 0) 
+	{
+		gettimeofday(&g_params->time.time_start, NULL);
+		g_params->sended++;
+	}
+	g_params->signals.send = 0;
 }
 
-// void	send_packet(void)
-// {
-// 	ft_bzero((void *)g_params->pckt.buf, PACKET_PING_SIZE);
-// 	g_params->pckt.ip->version = 4;
-// 	g_params->pckt.ip->ihl = sizeof(*g_params->pckt.ip) >> 2;
-// 	g_params->pckt.ip->ttl = g_params->ttl;
-// 	g_params->pckt.ip->protocol = IPPROTO_ICMP;
-// 	inet_pton(AF_INET, g_params->addrstr, &g_params->pckt.ip->daddr);
-// 	g_params->daddr = g_params->pckt.ip->daddr;
-// 	g_params->pckt.hdr->type = ICMP_ECHO;
-// 	g_params->pckt.hdr->code = 0;
-// 	g_params->pckt.hdr->un.echo.id = g_params->pid;
-// 	g_params->pckt.hdr->un.echo.sequence = g_params->seq++;
-// 	g_params->pckt.hdr->checksum = checksum((unsigned short*)g_params->pckt.hdr,
-// 	sizeof(struct icmphdr));
-// 	if (sendto(g_params->sockfd, (void *)&g_params->pckt, PACKET_PING_SIZE, 0,
-// 	(void *)g_params->rec_in,
-// 	sizeof(struct sockaddr_in)) < 0)
-// 		errorstr("sendto Error");
-// 	if (gettimeofday(&g_params->time.s, NULL) < 0)
-// 		errorstr("gettimeofday Error\n");
-// 	g_params->sended > 1 ? gettimeofday(&g_params->time.time_start, NULL) : 0;
-// 	g_params->sended++;
-// 	g_params->signals.send = 0;
-// }
+void	init_header()
+{
+	ft_bzero((void *)g_params->packet.buf, 84);
+	ft_bzero(&g_params->res, sizeof(t_res));
+	g_params->res->iov->iov_base = (void *)g_params->packet.buf;
+	g_params->res->iov->iov_len = sizeof(g_params->packet.buf);
+	g_params->res.msg.msg_iov = g_params->res->iov;
+	g_params->res.msg.msg_iovlen = 1;
+	g_params->res.msg.msg_name = NULL;
+	g_params->res.msg.msg_namelen = 0;
+	g_params->res.msg.msg_flags = MSG_DONTWAIT;
+}
+
+void	print_verbose()
+{
+	char		str[50];
+
+	printf("%d bytes from %s: type=%d code=%d\n",
+	g_params->bytes - (int)sizeof(struct iphdr),
+	inet_ntop(AF_INET, (void*)&g_params->packet.ip->saddr, str, 100),
+	g_params->packet.hdr->type, g_params->packet.hdr->code);
+}
+
+void 	receive_packet()
+{
+	int ret;
+
+	init_header();
+	while (!g_params->signals.end)
+	{
+		if ((ret = recvmsg(g_params->sockfd, &g_params->res.msg, MSG_DONTWAIT)) > 0)
+		{
+			g_params->bytes = ret;
+			if (g_params->packet.hdr->un.echo.id == g_params->pid)
+			{
+
+			}
+			else if (g_params->verbose == 1)
+				print_verbose();
+		}
+	}
+}
+
+
+
+
+void	get_packet(void)
+{
+	int			ret;
+
+	init_header();
+	while (!g_params->signals.end)
+	{
+		ret = recvmsg(g_params->sockfd, &g_params->response.msg, MSG_DONTWAIT);
+		if (ret > 0)
+		{
+			g_params->bytes = ret;
+			if (g_params->pckt.hdr->un.echo.id == g_params->pid)
+			{
+				calc_rtt();
+				printf("%d bytes from %s: icmp_seq=%d ttl=%d time=%.2Lf ms\n",
+				g_params->bytes - (int)sizeof(struct iphdr), g_params->addrstr,
+				g_params->pckt.hdr->un.echo.sequence, g_params->pckt.ip->ttl,
+				g_params->time.rtt);
+			}
+			else if (g_params->verbose & FLAG_V)
+				printf_v();
+			return ;
+		}
+	}
+}
 
