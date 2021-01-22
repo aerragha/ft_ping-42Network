@@ -17,10 +17,12 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
+#include <math.h>
 #include <arpa/inet.h>
 #include <signal.h>
 #include <netinet/ip_icmp.h>
 #include <sys/time.h>
+
 
 typedef struct      s_packet
 {
@@ -90,4 +92,5 @@ void	init_header();
 void	print_verbose();
 void	calc_rtt();
 void 	receive_packet();
+void	print_statistics();
 

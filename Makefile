@@ -39,10 +39,10 @@ $(PATH_OBJ):
 	@mkdir -p $@
 
 $(NAME) : $(ALL_OBJ)
-	@$(CC) $(ALL_OBJ) -o $(NAME)
+	@$(CC) $(ALL_OBJ) -o $(NAME) -lm
 
 $(PATH_OBJ)%.o : $(PATH_SRC)%.c $(HEADERS)
-	@$(CC) $(CFLAGS) -c $(INC) $< -o $@
+	$(CC) $(CFLAGS) -c $(INC) $< -o $@ 
 
 clean :
 	@rm -rf $(PATH_OBJ)

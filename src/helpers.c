@@ -33,23 +33,20 @@ void ft_bzero(void *s, size_t n)
 		i++;
 	}
 }
-
+// freee
 void init_params()
 {
     g_params = malloc(sizeof(t_params));
     ft_bzero(g_params, sizeof(t_params));
-    //
     g_params->packet.ip = (struct iphdr *)g_params->packet.buf;
 	g_params->packet.hdr = (struct icmphdr *)(g_params->packet.ip + 1);
-    //
     g_params->time.min = 0.0;
 	g_params->time.max = 0.0;
-    //
     g_params->signals.send = 1;
     g_params->signals.end = 0;
-    g_params->ttl = 64;
+    g_params->ttl = 15;
     g_params->pid = getpid();
-    g_params->seq = 0;
+    g_params->seq = 1;
 }
 
 void parse(int ac, char **av) 

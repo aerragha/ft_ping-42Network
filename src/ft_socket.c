@@ -15,12 +15,12 @@
 void	init_socket()
 {
 	int sockfd;
-	// int opt_val;
+	int opt_val;
 
-	// opt_val = 1;
+	opt_val = 1;
 	if ((sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP)) == -1)
 		print_error("Socket file descriptor not received!");
-	if (setsockopt(sockfd, SOL_IP, IP_TTL, &g_params->ttl, sizeof(g_params->ttl)) != 0)
+	if (setsockopt(sockfd, IPPROTO_IP, IP_HDRINCL, &opt_val, sizeof(int)) < 0)
 		print_error("Setsockopt: Setting socket options to TTL failed!");
 	g_params->sockfd = sockfd;
 }
@@ -29,7 +29,7 @@ void send_ping()
 {
 	ft_bzero((void *)g_params->packet.buf, 84);
 	g_params->packet.ip->version = 4;
-	g_params->packet.ip->ihl = sizeof(*g_params->packet.ip) >> 2;
+	g_params->packet.ip->ihl = 5;
 	g_params->packet.ip->ttl = g_params->ttl;
 	g_params->packet.ip->protocol = IPPROTO_ICMP;
 	inet_pton(AF_INET, g_params->addr_str, &g_params->packet.ip->daddr);
@@ -44,25 +44,25 @@ void send_ping()
 		print_error("Error: sendto is failed");
 	if (gettimeofday(&g_params->time.s, NULL) < 0)
 		print_error("Error: gettimeofday is failed");
-	if (g_params->sended == 0) 
-	{
-		gettimeofday(&g_params->time.time_start, NULL);
-		g_params->sended++;
-	}
+	g_params->sended == 1 ? gettimeofday(&g_params->time.time_start, NULL) : 0;
+	g_params->sended++;
 	g_params->signals.send = 0;
 }
 
 void	init_header()
 {
+	t_res	*res;
+
+	res = &g_params->res;
 	ft_bzero((void *)g_params->packet.buf, 84);
-	ft_bzero(&g_params->res, sizeof(t_res));
-	g_params->res.iov->iov_base = (void *)g_params->packet.buf;
-	g_params->res.iov->iov_len = sizeof(g_params->packet.buf);
-	g_params->res.msg.msg_iov = g_params->res.iov;
-	g_params->res.msg.msg_iovlen = 1;
-	g_params->res.msg.msg_name = NULL;
-	g_params->res.msg.msg_namelen = 0;
-	g_params->res.msg.msg_flags = MSG_DONTWAIT;
+	ft_bzero(res, sizeof(t_res));
+	res->iov->iov_base = (void *)g_params->packet.buf;
+	res->iov->iov_len = sizeof(g_params->packet.buf);
+	res->msg.msg_iov = res->iov;
+	res->msg.msg_iovlen = 1;
+	res->msg.msg_name = NULL;
+	res->msg.msg_namelen = 0;
+	res->msg.msg_flags = MSG_DONTWAIT;
 }
 
 void	print_verbose()
@@ -73,6 +73,7 @@ void	print_verbose()
 	g_params->bytes - (int)sizeof(struct iphdr),
 	inet_ntop(AF_INET, (void*)&g_params->packet.ip->saddr, str, 100),
 	g_params->packet.hdr->type, g_params->packet.hdr->code);
+	g_params->ttl = 64;
 }
 
 void	calc_rtt()
@@ -82,9 +83,9 @@ void	calc_rtt()
 	if (gettimeofday(&g_params->time.r, NULL) < 0)
 		print_error("Error: gettimeofday is failed");
 	g_params->received++;
-	rtt = (g_params->time.r.tv_usec - g_params->time.s.tv_usec) / 1000000;
+	rtt = (g_params->time.r.tv_usec - g_params->time.s.tv_usec) / 1000000.0;
 	rtt += (g_params->time.r.tv_sec - g_params->time.s.tv_sec);
-	rtt *= 1000;
+	rtt *= 1000.0;
 	g_params->time.rtt = rtt;
 	if (rtt > g_params->time.max)
 		g_params->time.max = rtt;
@@ -97,18 +98,18 @@ void	calc_rtt()
 void 	receive_packet()
 {
 	int ret;
+	
 	init_header();
 	while (!g_params->signals.end)
 	{
 		ret = recvmsg(g_params->sockfd, &g_params->res.msg, MSG_DONTWAIT);
-		printf("sdsds %d\n", ret);
 		if (ret > 0)
 		{
 			g_params->bytes = ret;
 			if (g_params->packet.hdr->un.echo.id == g_params->pid)
 			{
 				calc_rtt();
-				printf("%d bytes from %s: icmp_seq=%d ttl=%d time=%.2Lf ms\n",
+				printf("%d bytes from %s: icmp_seq=%d ttl=%d time=%.1Lf ms\n",
 				g_params->bytes - (int)sizeof(struct iphdr), g_params->addr_str,
 				g_params->packet.hdr->un.echo.sequence, g_params->packet.ip->ttl,
 				g_params->time.rtt);
@@ -117,5 +118,6 @@ void 	receive_packet()
 				print_verbose();
 			return ;
 		}
+		
 	}
 }
