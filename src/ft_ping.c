@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_ping.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aerragha <aerragha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aerragha <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/01/19 10:13:16 by aerragha          #+#    #+#             */
-/*   Updated: 2021/01/12 18:49:25 by aerragha         ###   ########.fr       */
+/*   Created: 2021/01/22 11:50:26 by aerragha          #+#    #+#             */
+/*   Updated: 2021/01/22 11:54:48 by aerragha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,12 +29,10 @@ unsigned short	checksum(unsigned short *data, int len)
 	return (unsigned short)(~checksum);
 }
 
-
-
-int get_infos(char *av)
+int				get_infos(char *av)
 {
 	struct addrinfo hints;
-    struct addrinfo *servinfo;
+	struct addrinfo *servinfo;
 
 	ft_bzero(&hints, sizeof(hints));
 	hints.ai_family = AF_INET;
@@ -46,7 +44,7 @@ int get_infos(char *av)
 	return (1);
 }
 
-void	print_statistics()
+void			print_statistics(void)
 {
 	struct timeval	start;
 	struct timeval	end;
@@ -58,37 +56,40 @@ void	print_statistics()
 	start = g_params->time.time_start;
 	end = g_params->time.time_end;
 	loss = (g_params->sended - g_params->received)
-	/ g_params->sended * 100.0;
+		/ g_params->sended * 100.0;
 	time = (end.tv_usec - start.tv_usec) / 1000000.0;
 	time += (end.tv_sec - start.tv_sec);
 	time *= 1000.0;
 	g_params->time.avg /= g_params->sended;
 	mdev = sqrt((g_params->time.sum_square / g_params->sended) -
-		g_params->time.avg * g_params->time.avg);
+			g_params->time.avg * g_params->time.avg);
 	printf("\n--- %s ping statistics ---\n", g_params->host);
 	printf("%d packets transmitted, %d received, ",
-	g_params->sended, g_params->received);
+			g_params->sended, g_params->received);
 	printf("%.0f%% packet loss, time %.0Lfms\n", loss, time);
 	if (g_params->received != 0)
 		printf("rtt min/avg/max/mdev = %.3Lf/%.3Lf/%.3Lf/%.3Lf ms\n",
-		g_params->time.min, g_params->time.avg,
-		g_params->time.max, mdev);
+				g_params->time.min, g_params->time.avg,
+				g_params->time.max, mdev);
 }
 
-
-void handle_signal(int sig) {
-    if (sig == SIGINT)
-    {
+void			handle_signal(int sig)
+{
+	if (sig == SIGINT)
+	{
 		print_statistics();
 		g_params->signals.end = 1;
+		free(g_params);
 	}
-    else if (sig == SIGALRM)
-        g_params->signals.send = 1;
+	else if (sig == SIGALRM)
+		g_params->signals.send = 1;
 }
 
-void ping() {
+void			ping(void)
+{
 	init_socket();
-	printf("PING %s (%s) 56(84) bytes of data.\n", g_params->host, g_params->addr_str);
+	printf("PING %s (%s) 56(84) bytes of data.\n",
+			g_params->host, g_params->addr_str);
 	while (!g_params->signals.end)
 	{
 		if (g_params->signals.send)
@@ -99,4 +100,3 @@ void ping() {
 		}
 	}
 }
-

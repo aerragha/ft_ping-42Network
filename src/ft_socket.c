@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Untitled-1                                         :+:      :+:    :+:   */
+/*   ft_socket.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aerragha <aerragha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aerragha <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/01/19 16:58:04 by aerragha          #+#    #+#             */
-/*   Updated: 2021/01/19 16:58:04 by aerragha         ###   ########.fr       */
+/*   Created: 2021/01/22 11:43:36 by aerragha          #+#    #+#             */
+/*   Updated: 2021/01/22 11:49:37 by aerragha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ping.h"
 
-void	init_socket()
+void	init_socket(void)
 {
 	int sockfd;
 	int opt_val;
@@ -25,7 +25,7 @@ void	init_socket()
 	g_params->sockfd = sockfd;
 }
 
-void send_ping()
+void	send_ping(void)
 {
 	ft_bzero((void *)g_params->packet.buf, 84);
 	g_params->packet.ip->version = 4;
@@ -38,9 +38,10 @@ void send_ping()
 	g_params->packet.hdr->code = 0;
 	g_params->packet.hdr->un.echo.id = g_params->pid;
 	g_params->packet.hdr->un.echo.sequence = g_params->seq++;
-	g_params->packet.hdr->checksum = checksum((unsigned short*)g_params->packet.hdr, sizeof(struct icmphdr));
-	if (sendto(g_params->sockfd, (void *)&g_params->packet, 84, 0, 
-	(void *)g_params->rec_in, sizeof(struct sockaddr_in)) < 0)
+	g_params->packet.hdr->checksum = checksum(
+			(unsigned short*)g_params->packet.hdr, sizeof(struct icmphdr));
+	if (sendto(g_params->sockfd, (void *)&g_params->packet, 84, 0,
+				(void *)g_params->rec_in, sizeof(struct sockaddr_in)) < 0)
 		print_error("Error: sendto is failed");
 	if (gettimeofday(&g_params->time.s, NULL) < 0)
 		print_error("Error: gettimeofday is failed");
@@ -49,7 +50,7 @@ void send_ping()
 	g_params->signals.send = 0;
 }
 
-void	init_header()
+void	init_header(void)
 {
 	t_res	*res;
 
@@ -65,18 +66,7 @@ void	init_header()
 	res->msg.msg_flags = MSG_DONTWAIT;
 }
 
-void	print_verbose()
-{
-	char		str[50];
-
-	printf("%d bytes from %s: type=%d code=%d\n",
-	g_params->bytes - (int)sizeof(struct iphdr),
-	inet_ntop(AF_INET, (void*)&g_params->packet.ip->saddr, str, 100),
-	g_params->packet.hdr->type, g_params->packet.hdr->code);
-	g_params->ttl = 64;
-}
-
-void	calc_rtt()
+void	calc_rtt(void)
 {
 	long double rtt;
 
@@ -95,10 +85,10 @@ void	calc_rtt()
 	g_params->time.sum_square += rtt * rtt;
 }
 
-void 	receive_packet()
+void	receive_packet(void)
 {
 	int ret;
-	
+
 	init_header();
 	while (!g_params->signals.end)
 	{
@@ -110,14 +100,14 @@ void 	receive_packet()
 			{
 				calc_rtt();
 				printf("%d bytes from %s: icmp_seq=%d ttl=%d time=%.1Lf ms\n",
-				g_params->bytes - (int)sizeof(struct iphdr), g_params->addr_str,
-				g_params->packet.hdr->un.echo.sequence, g_params->packet.ip->ttl,
-				g_params->time.rtt);
+						g_params->bytes - (int)sizeof(struct iphdr),
+						g_params->addr_str,
+						g_params->packet.hdr->un.echo.sequence,
+						g_params->packet.ip->ttl, g_params->time.rtt);
 			}
 			else if (g_params->verbose == 1)
 				print_verbose();
 			return ;
 		}
-		
 	}
 }
