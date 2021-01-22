@@ -90,7 +90,7 @@ void	receive_packet(void)
 	int ret;
 
 	init_header();
-	while (!g_params->signals.end)
+	while (!g_params->signals.end && !g_params->signals.send)
 	{
 		ret = recvmsg(g_params->sockfd, &g_params->res.msg, MSG_DONTWAIT);
 		if (ret > 0)
