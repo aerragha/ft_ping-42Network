@@ -99,7 +99,7 @@ void	receive_packet(void)
 			if (g_params->packet.hdr->un.echo.id == g_params->pid)
 			{
 				calc_rtt();
-				printf("%d bytes from %s: icmp_seq=%d ttl=%d time=%.1Lf ms\n",
+				printf("%d bytes from %s: icmp_seq=%d ttl=%d time=%.2Lf ms\n",
 						g_params->bytes - (int)sizeof(struct iphdr),
 						g_params->addr_str,
 						g_params->packet.hdr->un.echo.sequence,
